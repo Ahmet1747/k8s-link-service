@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --grid: rgba(79, 70, 229, .08);
+      --glow: rgba(124, 58, 237, .18);
+      --accent: #4f46e5;
+      --accent2: #7c3aed;
+      --chip: #f1f5f9;
+      --ok-bg: #ecfdf5;
+      --ok-border: #a7f3d0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #070b16;
+        --card: #111827;
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --border: #24304a;
+        --grid: rgba(129, 140, 248, .10);
+        --glow: rgba(124, 58, 237, .30);
+        --chip: #1a2336;
+        --ok-bg: #052e2b;
+        --ok-border: #134e4a;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+    /* Grid deseni */
+    body::before {
+      content: "";
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(to right, var(--grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+      background-size: 42px 42px;
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
+    }
+    /* Yumuşak renk parıltısı */
+    body::after {
+      content: "";
+      position: fixed; z-index: 0;
+      top: -180px; left: 50%; transform: translateX(-50%);
+      width: 620px; height: 620px; border-radius: 50%;
+      background: radial-gradient(circle, var(--glow), transparent 65%);
+      filter: blur(20px); pointer-events: none;
+    }
+    .wrap { position: relative; z-index: 1; width: 100%; max-width: 560px; text-align: center; }
+    .badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .78rem; font-weight: 600; color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      padding: .3rem .7rem; border-radius: 999px; margin-bottom: 1.1rem;
+    }
+    h1 {
+      font-size: 2rem; line-height: 1.15; margin: 0 0 .5rem; letter-spacing: -.02em;
+    }
+    h1 .grad {
+      background: linear-gradient(120deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .subtitle { color: var(--muted); margin: 0 auto 1.6rem; font-size: 1rem; max-width: 30rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.4rem;
+      box-shadow: 0 18px 50px rgba(2, 6, 23, .14);
+    }
+    .row { display: flex; gap: .6rem; }
+    input {
+      flex: 1; min-width: 0;
+      padding: .8rem 1rem; font-size: 1rem;
+      color: var(--text); background: transparent;
+      border: 1px solid var(--border); border-radius: 12px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus {
+      outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+    }
+    button.primary {
+      padding: .8rem 1.2rem; font-size: 1rem; font-weight: 600;
+      border: 0; border-radius: 12px; cursor: pointer; color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 35%, transparent);
+      transition: transform .08s, opacity .15s;
+      white-space: nowrap;
+    }
+    button.primary:hover { opacity: .93; }
+    button.primary:active { transform: translateY(1px); }
+    #result { margin-top: 1rem; word-break: break-all; font-size: .95rem; text-align: left; }
+    .result-box {
+      display: flex; align-items: center; gap: .6rem;
+      background: var(--ok-bg); border: 1px solid var(--ok-border);
+      padding: .7rem .9rem; border-radius: 12px;
+    }
+    .result-box a { color: var(--accent); font-weight: 600; text-decoration: none; flex: 1; }
+    .result-box a:hover { text-decoration: underline; }
+    .copy {
+      padding: .4rem .7rem; font-size: .8rem; font-weight: 600;
+      background: transparent; color: var(--accent);
+      border: 1px solid var(--border); border-radius: 9px; cursor: pointer;
+    }
+    .error { color: #dc2626; }
+    .features { display: flex; flex-wrap: wrap; gap: .55rem; justify-content: center; margin-top: 1.3rem; }
+    .chip {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .82rem; color: var(--muted);
+      background: var(--chip); border: 1px solid var(--border);
+      padding: .45rem .8rem; border-radius: 999px;
+    }
+    .muted { color: var(--muted); opacity: .85; font-size: .8rem; margin: 1.6rem 0 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">🔗 DevOps Staj · Capstone</span>
+    <h1>Uzun linkleri <span class="grad">saniyeler içinde</span> kısaltın</h1>
+    <p class="subtitle">Bir URL yapıştırın, kısa ve paylaşılabilir bir bağlantı alın.</p>
+
+    <div class="card">
+      <div class="row">
+        <input id="url" type="url" placeholder="https://ornek.com/cok/uzun/bir/adres"
+               onkeydown="if(event.key==='Enter') shorten()" />
+        <button class="primary" onclick="shorten()">Kısalt</button>
+      </div>
+      <div id="result"></div>
+    </div>
+
+    <div class="features">
+      <span class="chip">⚡ Hızlı</span>
+      <span class="chip">🔒 Güvenli</span>
+      <span class="chip">📊 İzlenebilir</span>
+      <span class="chip">☁️ Bulut-native</span>
+    </div>
+
+    <p class="muted">URL Shortener · dev ekibi teslimi</p>
+  </div>
+
+  <script>
+    async function shorten() {
+      const url = document.getElementById('url').value.trim();
+      const result = document.getElementById('result');
+      if (!url) { result.innerHTML = '<span class="error">Lütfen bir URL girin.</span>'; return; }
+      result.textContent = 'Kısaltılıyor...';
+      try {
+        const res = await fetch('/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        if (!res.ok) { result.innerHTML = '<span class="error">Hata: geçersiz URL olabilir.</span>'; return; }
+        const data = await res.json();
+        const full = window.location.origin + data.short_url;
+        result.innerHTML =
+          '<div class="result-box">' +
+            '<a href="' + full + '">' + full + '</a>' +
+            '<button class="copy" onclick="copyLink(this, \'' + full + '\')">Kopyala</button>' +
+          '</div>';
+      } catch (e) {
+        result.innerHTML = '<span class="error">Bir hata oluştu.</span>';
+      }
+    }
+
+    async function copyLink(btn, text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        const old = btn.textContent;
+        btn.textContent = 'Kopyalandı ✓';
+        setTimeout(() => { btn.textContent = old; }, 1500);
+      } catch (e) { /* pano erişimi yoksa sessiz geç */ }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# === ASLA COMMIT'LENMEMESİ GEREKENLER (AWS & secret) ===
+# AWS kimlik bilgileri / anahtarlar
+.aws/
+credentials
+*.pem
+*.ppk
+aws_credentials*
+accessKeys.csv
+*accessKeys*.csv
+*.credentials
+
+# ortam değişkenleri / secret dosyaları
+.env
+.env.*
+!.env.example
+*.secret
+secrets.*
+
+# Terraform/state (ileride kullanılırsa)
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# === genel ===
+node_modules/
+*.log
+.DS_Store
+__pycache__/
+*.tmp
+
+# NOT: AWS access key / secret / .pem dosyalarını ASLA repoya eklemeyin.
+# aws configure ile bilgiler ~/.aws/ altında (repo dışında) saklanır.
+# Yanlışlıkla eklerseniz: anahtarı hemen IAM'den DEVRE DIŞI bırakın/silin ve yenisini üretin.
