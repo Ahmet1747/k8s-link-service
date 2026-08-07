@@ -1,0 +1,4 @@
+*.db
+urls.db
+.env
+__pycache__/
