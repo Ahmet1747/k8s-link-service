@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main", "milestone/*"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: 330759080405.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY: url-shortener
+
+jobs:
+ 
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kodu cek
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Bagimliliklari yukle
+        run: |
+          pip install -r app/requirements.txt
+          pip install ruff
+
+      - name: Lint (ruff)
+        run: ruff check app/urlshortener/
+
+      - name: Testleri calistir
+        run: |
+          cd app
+          python -m pytest -q
+
+  build-push:
+    name: Build & Push to ECR
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Kodu cek
+        uses: actions/checkout@v4
+
+      - name: AWS kimlik bilgilerini ayarla
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: ECR'a giris yap
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Image'i build et ve push et
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG app/
+          docker tag  $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+                      $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Push edilen image bilgisi
+        run: echo "Image → $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}"
