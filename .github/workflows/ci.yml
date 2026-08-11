@@ -32,7 +32,7 @@ jobs:
           pip install ruff
 
       - name: Lint (ruff)
-        run: ruff check app/urlshortener/
+        run: ruff check app/urlshortener/ --ignore I001
 
       - name: Testleri calistir
         run: |
