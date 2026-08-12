@@ -21,5 +21,5 @@ output "rds_endpoint" {
 output "rds_password" {
   description = "Postgres RDS Sifresi"
   value       = random_password.db_password.result
-  sensitive   = true # Ekrana acik sekilde basicak kadar acemi degiliz :)
+  sensitive   = true 
 }
