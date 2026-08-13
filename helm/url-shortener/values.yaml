@@ -1,0 +1,18 @@
+image:
+  repository: 330759080405.dkr.ecr.us-east-1.amazonaws.com/url-shortener
+  tag: "latest"
+
+replicaCount: 2
+
+# Hem Sifre hem Endpoint'i dummy (bos) birakiyoruz. 
+# Bunlar Github Actions uzerinden (--set komutuyla) gizlice gelecek!
+dbPassword: "dummy"
+dbEndpoint: "dummy" 
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: true
+ 

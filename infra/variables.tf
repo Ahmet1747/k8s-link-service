@@ -19,7 +19,7 @@ variable "owner" {
 variable "my_ip" {
   description = "Senin Public IP Adresin (SSH erisimi icin)"
   type        = string
- default     = "***********/32" 
+ default     = "0.0.0.0/0" 
  }
 
 variable "key_name" {
