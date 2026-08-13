@@ -21,7 +21,7 @@ build, Terraform ile altyapı, k3s (Kubernetes) ile deploy, Prometheus/Grafana/L
 ![Grafana](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 
-**🌐 Canlı:** `[canlı URL — teardown öncesi]`  ·  **👤 Yapan:** [Ahmet Can Bezikoğlu](https://github.com/Ahmet1747)
+**🌐 Canlı:** `https://ahmetops.com/`  ·  **👤 Yapan:** [Ahmet Can Bezikoğlu](https://github.com/Ahmet1747)
 
 ---
 
@@ -54,17 +54,22 @@ Prometheus · Grafana · Loki
 3. **Helm** uygulamayı k3s'e deploy eder; **Ingress** ile public URL açılır.
 4. **Prometheus/Grafana/Loki** metrikleri ve logları toplar; alarm kuralları uyarır.
 
-> Kurulum adımları: [docs/capstone-rehberi.md](docs/capstone-rehberi.md)
 
 ## 📸 Ekran Görüntüleri
-> `docs/screenshots/` altına ekleyin ve buraya gömün.
 - Çalışan uygulama: `![app](docs/screenshots/app.png)`
 - Grafana dashboard: `![grafana](docs/screenshots/grafana.png)`
 - Yeşil CI/CD pipeline: `![ci](docs/screenshots/pipeline.png)`
 
 ## 📚 Ne Öğrendim
-- [ ] [Kendi cümlenizle 3-5 madde: en zorlandığınız/öğrendiğiniz şeyler]
-- [ ] ...
+- 1. Önceden sadece `kubectl get pods` yazıp geçerdim. Ancak bu projede karşılaştığım *CrashLoopBackOff* ve *ImagePullBackOff* hataları sayesinde `kubectl logs` ve `kubectl describe` komutlarıyla loglara bakarak hata ayıklamayı  öğrendim.
+
+- 2.  GitHub Actions üzerinden CI/CD pipeline otomatik bir şekilde yapmayı öğrendim. AWS ECR'a bağlanıp, oradan aldığım token'ı K3s içindeki Helm'e güvenli bir şekilde aktarmak ise projenin zorlandığım yerlerindendi.
+
+- 3.  Prometheus, Grafana ve Loki üçlüsü ile bir sistemin her saniyesi izlenebilen canlı bir organizmaya dönüştüğünü öğrendim. 
+
+- 4. AWS konsolundan elle tıklayarak EC2 veya RDS açmak yerine, bunu Terraform ile kodlayarak yapmak başlarda zor geldi. Ancak tüm altyapımın tek bir `terraform apply` komutuyla ayağa kalkması gerçekten çok kullanışlı onu öğrendim.
+
+- 5.  Projemin en sonunda Cert-Manager kullanarak Let's Encrypt'ten tamamen otomatize bir şekilde SSL sertifikası basmak ve bunu `ahmetops.com` özel alan adıma bağlamak gibi profesyonel bir uygulama haline gettirmeyi öğrendim.
 
 ## ⚙️ Yerel Geliştirme
 ```bash
