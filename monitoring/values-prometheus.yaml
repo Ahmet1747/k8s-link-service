@@ -6,8 +6,6 @@ prometheus:
       limits:
         memory: 1Gi
     retention: 2d
-    serviceMonitorSelectorNilUsesHelmValues: false
-    ruleSelectorNilUsesHelmValues: false
 
 grafana:
   adminPassword: "admin"
@@ -26,7 +24,6 @@ alertmanager:
     - name: 'slack-bildirimleri'
       slack_configs:
       - api_url: 'https://hooks.slack.com/services/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'
-        channel: '#alarmlar'
         send_resolved: true
   alertmanagerSpec:
     resources:
