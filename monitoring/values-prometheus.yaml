@@ -23,7 +23,7 @@ alertmanager:
     receivers:
     - name: 'slack-bildirimleri'
       slack_configs:
-      - api_url: 'https://hooks.slack.com/services/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'
+      - api_url: 'https://hooks.slack.com/services/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'
         send_resolved: true
   alertmanagerSpec:
     resources:
