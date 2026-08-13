@@ -1,0 +1,32 @@
+prometheus:
+  prometheusSpec:
+    resources:
+      requests:
+        memory: 400Mi
+      limits:
+        memory: 1Gi
+    retention: 2d
+
+grafana:
+  adminPassword: "admin"
+  resources:
+    requests:
+      memory: 200Mi
+    limits:
+      memory: 500Mi
+
+alertmanager:
+  config:
+    route:
+      group_by: ['alertname']
+      receiver: 'slack-bildirimleri'
+    receivers:
+    - name: 'slack-bildirimleri'
+      slack_configs:
+      - api_url: 'https://hooks.slack.com/services/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'
+        channel: '#alarmları'
+        send_resolved: true
+  alertmanagerSpec:
+    resources:
+      requests:
+        memory: 50Mi

@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: url-shortener-monitor
+  labels:
+    release: kps # KPS'nin bu dosyayı tanıması için sihirli etiket
+spec:
+  selector:
+    matchLabels:
+      app: url-shortener
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 10s
