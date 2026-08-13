@@ -24,6 +24,7 @@ alertmanager:
     - name: 'slack-bildirimleri'
       slack_configs:
       - api_url: 'https://hooks.slack.com/services/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'
+        channel: '#alarmları'
         send_resolved: true
   alertmanagerSpec:
     resources:
