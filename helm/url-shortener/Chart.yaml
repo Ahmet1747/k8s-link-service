@@ -1,0 +1,6 @@
+apiVersion: v2
+name: url-shortener
+description: Capstone projesi URL Kisaltici Helm Chart'i
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
