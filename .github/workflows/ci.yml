@@ -104,7 +104,18 @@ jobs:
             export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
             sudo chmod 644 /etc/rancher/k3s/k3s.yaml
             
-            # 3. HELM DEPLOY
+            # 3. AWS'den ECR şifresini al ve k3s'in içine "ecr-secret" adında gizli bir anahtar olarak koy
+            export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            
+            ECR_PASSWORD=$(aws ecr get-login-password --region us-east-1)
+            kubectl create secret docker-registry ecr-secret \
+              --docker-server=330759080405.dkr.ecr.us-east-1.amazonaws.com \
+              --docker-username=AWS \
+              --docker-password=$ECR_PASSWORD \
+              --dry-run=client -o yaml | kubectl apply -f -
+            
+            # 4. HELM DEPLOY
             helm upgrade --install url-shortener /home/ubuntu/helm/url-shortener \
               --set image.tag=${{ github.sha }} \
               --set dbPassword="${{ secrets.RDS_PASSWORD }}" \
