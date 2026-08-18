@@ -1,0 +1,76 @@
+name: Continuous Deployment
+
+on:
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    types:
+      - completed
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: 330759080405.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY: url-shortener
+
+jobs:
+  deploy:
+    name: Deploy to k3s (CD)
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Kodu cek
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+        
+      - name: AWS kimlik bilgilerini ayarla (ECR Sifresi Icin)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: ECR Sifresini Uret
+        id: ecr
+        run: echo "password=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})" >> $GITHUB_OUTPUT
+        
+      - name: Helm dosyalarini EC2'ye gonder (SCP)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "helm/url-shortener/*"
+          target: "/home/ubuntu/"
+
+      - name: K3s Master'a baglan ve Helm komutunu calistir
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          ECR_PASSWORD: ${{ steps.ecr.outputs.password }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: ECR_PASSWORD
+          script: |
+            # 1. Eger sunucuda helm kurulu degilse otomatik kur
+            if ! command -v helm &> /dev/null; then
+              curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+            fi
+            
+            # 2. k3s yetki dosyasini Helm'in okuyabilmesi icin iznini ac
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+            
+            # 3. GITHUB'DAN GELEN SIFREYI K3S'E KAYDET
+            kubectl create secret docker-registry ecr-secret \
+              --docker-server=${{ env.ECR_REGISTRY }} \
+              --docker-username=AWS \
+              --docker-password=$ECR_PASSWORD \
+              --dry-run=client -o yaml | kubectl apply -f -
+            
+            # 4. HELM DEPLOY
+            helm upgrade --install url-shortener /home/ubuntu/helm/url-shortener \
+              --set image.tag=${{ github.event.workflow_run.head_sha }} \
+              --set dbPassword="${{ secrets.RDS_PASSWORD }}" \
+              --set dbEndpoint="${{ secrets.RDS_ENDPOINT }}"
