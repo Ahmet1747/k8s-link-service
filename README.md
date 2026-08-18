@@ -21,7 +21,7 @@ build, Terraform ile altyapı, k3s (Kubernetes) ile deploy, Prometheus/Grafana/L
 ![Grafana](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 
-**🌐 Canlı:** `[canlı URL — teardown öncesi]`  ·  **👤 Yapan:** [Ahmet Can Bezikoğlu](https://github.com/Ahmet1747)
+**🌐 Canlı:** `[https://ahmetops.com/]`  ·  **👤 Yapan:** [Ahmet Can Bezikoğlu](https://github.com/Ahmet1747)
 
 ---
 
