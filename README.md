@@ -54,7 +54,6 @@ Prometheus · Grafana · Loki
 3. **Helm** uygulamayı k3s'e deploy eder; **Ingress** ile public URL açılır.
 4. **Prometheus/Grafana/Loki** metrikleri ve logları toplar; alarm kuralları uyarır.
 
-> Kurulum adımları: [docs/capstone-rehberi.md](docs/capstone-rehberi.md)
 
 ## 📸 Ekran Görüntüleri
 > `docs/screenshots/` altına ekleyin ve buraya gömün.
@@ -64,7 +63,10 @@ Prometheus · Grafana · Loki
 
 ## 📚 Ne Öğrendim
 - [ ] [Kendi cümlenizle 3-5 madde: en zorlandığınız/öğrendiğiniz şeyler]
-- [ ] ...
+- Bir uygulamayı baştan sona kadar canlıya alma süreçlerini öğrendim.
+- Altyapının manuel kurulum yerine Terraform ile kod olarak (IaC) tasarlanıp yönetilmesini öğrendim; böylece tekrarlanabilir, versiyonlanabilir ve hatasız bir ortam kurmanın mümkün olduğunu bizzat deneyimledim.
+- CI/CD pipeline tasarlamayı ve uygulamadaki her değişikliğin test, build ve deployment aşamalarından geçerek otomatik biçimde canlı ortama yansıtılmasını öğrendim. 
+- DevOps sürecinde güvenliğin ayrı bir adım değil, geliştirme sürecinin her anına entegre edilmesi gereken bir düşünce biçimi olduğunu öğrendim.
 
 ## ⚙️ Yerel Geliştirme
 ```bash
