@@ -62,7 +62,6 @@ Prometheus · Grafana · Loki
 - Yeşil CI/CD pipeline: `![ci](docs/screenshots/pipeline.png)`
 
 ## 📚 Ne Öğrendim
-- [ ] [Kendi cümlenizle 3-5 madde: en zorlandığınız/öğrendiğiniz şeyler]
 - Bir uygulamayı baştan sona kadar canlıya alma süreçlerini öğrendim.
 - Altyapının manuel kurulum yerine Terraform ile kod olarak (IaC) tasarlanıp yönetilmesini öğrendim; böylece tekrarlanabilir, versiyonlanabilir ve hatasız bir ortam kurmanın mümkün olduğunu bizzat deneyimledim.
 - CI/CD pipeline tasarlamayı ve uygulamadaki her değişikliğin test, build ve deployment aşamalarından geçerek otomatik biçimde canlı ortama yansıtılmasını öğrendim. 

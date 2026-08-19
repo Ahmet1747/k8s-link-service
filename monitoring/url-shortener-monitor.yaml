@@ -3,7 +3,7 @@ kind: ServiceMonitor
 metadata:
   name: url-shortener-monitor
   labels:
-    release: kps # KPS'nin bu dosyayı tanıması için sihirli etiket
+    release: kps # KPS'nin bu dosyayı tanıması için  etiket
 spec:
   selector:
     matchLabels:
